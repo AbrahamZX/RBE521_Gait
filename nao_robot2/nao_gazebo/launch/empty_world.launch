@@ -31,6 +31,6 @@
 		 type="spawn_model"
 		 respawn="false"
 		 output="screen"
-    	 args="-urdf -x $(arg x) -y $(arg y) -z $(arg z) -R $(arg roll) -P $(arg pitch) -Y $(arg yaw) -model pr2 -param robot_description"/>
+    	 args="-urdf -x $(arg x) -y $(arg y) -z $(arg z) -R $(arg roll) -P $(arg pitch) -Y $(arg yaw) -model nao -param robot_description"/>
     	 
 </launch>
