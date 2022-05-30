@@ -16,4 +16,5 @@ rosrun gazebo_ros spawn_model -file \`rospack find nao_description\`/naoV32_gene
 
 Useful commands:
 catkin build
+
 source ~/catkin_ws/devel/setup.bash
