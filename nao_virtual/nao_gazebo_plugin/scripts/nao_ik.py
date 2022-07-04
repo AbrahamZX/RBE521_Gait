@@ -153,7 +153,7 @@ def T_n_s (a, alp, d, the):
     # CANNOT SUBSTITUTE fk.T_n --> creates 3D arrays and relies on list structure
     Tn = np.array([[np.cos(the), -np.sin(the), 0, a],
                         [np.sin(the)*np.cos(alp), np.cos(the)*np.cos(alp), -np.sin(alp), -d*np.sin(alp)],
-                        [np.sin(the)*np.cos(alp), np.cos(the)*np.sin(alp), np.cos(alp), d*np.cos(alp)],
+                        [np.sin(the)*np.sin(alp), np.cos(the)*np.sin(alp), np.cos(alp), d*np.cos(alp)],
                         [0, 0, 0, 1]])
 
     return Tn
