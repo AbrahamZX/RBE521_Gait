@@ -112,9 +112,59 @@ def T_n_s (a, alp, d, the):
 
     return Tn
 
+def IK_RA(T=fk.FK_RA()):
+
+    Ab = fk.A([0, -98.00, 100.00])
+    Ae = fk.A([57.75+55.95, 0, 0])
+
+    UpperArmLength = 105
+    ElbowOffsetY = 15
+
+    l1 = -ElbowOffsetY
+    l2 = UpperArmLength
+
+    T_prime = np.linalg.pinv(Ab)@T@np.linalg.pinv(Ae)
+    T_dprime = np.linalg.pinv(T_prime)@np.linalg.pinv(fk.R_z(np.pi/2))
+
+    the3 = np.arcsin(T_dprime[2,3]/l1)
+    the4 = np.arccos((l2*T_dprime[1,3]-l1*T_dprime[0,3]*np.cos(the3))/(l2**2 + l1**2*np.cos(the3)**2))
+    T23 = T_n_s(-ElbowOffsetY,np.pi/2,UpperArmLength,the3)
+    T34 = T_n_s(0,-np.pi/2,0,the4)
+    T_tprime = T_prime@np.linalg.pinv(T23)@np.linalg.pinv(T34)
+    the2 = np.arctan2(T_tprime[1,0],T_tprime[1,1])-np.pi/2
+    the1 = np.arctan2(T_tprime[0,2],T_tprime[2,2])
+    return [the1, the2, the3, the4]
+
+
+def IK_LA(T=fk.FK_LA()):
+
+    Ab = fk.A([0, -98.00, 100.00])
+    Ae = fk.A([57.75+55.95, 0, 0])
+
+    UpperArmLength = 105
+    ElbowOffsetY = 15
+
+    l1 = ElbowOffsetY
+    l2 = UpperArmLength
+
+    T_prime = np.linalg.pinv(Ab)@T@np.linalg.pinv(Ae)
+    T_dprime = np.linalg.pinv(T_prime)@np.linalg.pinv(fk.R_z(np.pi/2))
+
+    the3 = np.arcsin(T_dprime[2,3]/l1)
+    the4 = np.arccos((l2*T_dprime[1,3]-l1*T_dprime[0,3]*np.cos(the3))/(l2**2 + l1**2*np.cos(the3)**2))
+    T23 = T_n_s(ElbowOffsetY,np.pi/2,UpperArmLength,the3)
+    T34 = T_n_s(0,-np.pi/2,0,the4)
+    T_tprime = T_prime@np.linalg.pinv(T23)@np.linalg.pinv(T34)
+    the2 = np.arctan2(T_tprime[1,0],T_tprime[1,1])-np.pi/2
+    the1 = np.arctan2(T_tprime[0,2],T_tprime[2,2])
+    return [the1, the2, the3, the4]
 
 if __name__ == '__main__':
     IKLL = IK_LL ()
     print ("Left leg:\n",IKLL,"\n")
     IKRL = IK_RL ()
     print ("Right leg:\n",IKRL,"\n")
+    IKLA = IK_LA ()
+    print("Left Arm: \n",IKLA,"\n")
+    IKRA = IK_RA ()
+    print("Right Arm: \n",IKRA,"\n")
