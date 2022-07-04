@@ -103,15 +103,6 @@ def IK_RL(T=fk.FK_RL()):
 
     return [the1,the2,the3,the4,the5,the6] #Maybe use a different format? 
 
-def T_n_s (a, alp, d, the):
-    # CANNOT SUBSTITUTE fk.T_n --> creates 3D arrays and relies on list structure
-    Tn = np.array([[np.cos(the), -np.sin(the), 0, a],
-                        [np.sin(the)*np.cos(alp), np.cos(the)*np.cos(alp), -np.sin(alp), -d*np.sin(alp)],
-                        [np.sin(the)*np.cos(alp), np.cos(the)*np.sin(alp), np.cos(alp), d*np.cos(alp)],
-                        [0, 0, 0, 1]])
-
-    return Tn
-
 def IK_RA(T=fk.FK_RA()):
 
     Ab = fk.A([0, -98.00, 100.00])
@@ -135,7 +126,6 @@ def IK_RA(T=fk.FK_RA()):
     the1 = np.arctan2(T_tprime[0,2],T_tprime[2,2])
     return [the1, the2, the3, the4]
 
-
 def IK_LA(T=fk.FK_LA()):
 
     Ab = fk.A([0, -98.00, 100.00])
@@ -158,6 +148,15 @@ def IK_LA(T=fk.FK_LA()):
     the2 = np.arctan2(T_tprime[1,0],T_tprime[1,1])-np.pi/2
     the1 = np.arctan2(T_tprime[0,2],T_tprime[2,2])
     return [the1, the2, the3, the4]
+
+def T_n_s (a, alp, d, the):
+    # CANNOT SUBSTITUTE fk.T_n --> creates 3D arrays and relies on list structure
+    Tn = np.array([[np.cos(the), -np.sin(the), 0, a],
+                        [np.sin(the)*np.cos(alp), np.cos(the)*np.cos(alp), -np.sin(alp), -d*np.sin(alp)],
+                        [np.sin(the)*np.cos(alp), np.cos(the)*np.sin(alp), np.cos(alp), d*np.cos(alp)],
+                        [0, 0, 0, 1]])
+
+    return Tn
 
 if __name__ == '__main__':
     IKLL = IK_LL ()
