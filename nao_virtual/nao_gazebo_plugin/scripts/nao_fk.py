@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import numpy as np
 
 def R_x (ang):
@@ -28,7 +29,7 @@ def T_n (a, alp, d, the, Tn = []):
     for n in range(len(a)):    
         Tn.append(np.array([[np.cos(the[n]), -np.sin(the[n]), 0, a[n]],
                              [np.sin(the[n])*np.cos(alp[n]), np.cos(the[n])*np.cos(alp[n]), -np.sin(alp[n]), -d[n]*np.sin(alp[n])],
-                             [np.sin(the[n])*np.cos(alp[n]), np.cos(the[n])*np.sin(alp[n]), np.cos(alp[n]), d[n]*np.cos(alp[n])],
+                             [np.sin(the[n])*np.sin(alp[n]), np.cos(the[n])*np.sin(alp[n]), np.cos(alp[n]), d[n]*np.cos(alp[n])],
                              [0, 0, 0, 1]]))
 
     return Tn
@@ -45,7 +46,6 @@ def FK_LA (LShoulderPitch = 0, LShoulderRoll = 0, LElbowYaw = 0, LElbowRoll = 0)
     alp = [-np.pi/2, np.pi/2, np.pi/2, -np.pi/2]
     d = [0, 0, 105.00, 0]
     the = [LShoulderPitch, LShoulderRoll+np.pi/2, LElbowYaw, LElbowRoll]
-
     Ab = A([0, 98.00, 100.00])
     Ae = A([57.75+55.95, 0, 0])
     R = R_z(-np.pi/2)
@@ -53,7 +53,6 @@ def FK_LA (LShoulderPitch = 0, LShoulderRoll = 0, LElbowYaw = 0, LElbowRoll = 0)
     Tn = T_n(a, alp, d, the, [Ab])
     Tn.append(R)
     Tn.append(Ae)
-
     T0n = T_0n(Tn)
     
     return T0n
