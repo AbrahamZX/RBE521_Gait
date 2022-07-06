@@ -3,7 +3,6 @@ from scipy.spatial.transform import Rotation as R
 import nao_fk as fk
 
 def sixvec2transmat(P,eul='xyz',deg=False):
-    A = fk.A(P[0:3])
     rot = R.from_euler(eul,P[3:],degrees=deg)
     T = rot.as_matrix()
     T = np.vstack((T,[0,0,0]))
