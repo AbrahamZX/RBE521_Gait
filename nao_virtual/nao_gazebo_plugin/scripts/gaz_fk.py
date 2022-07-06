@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
+import rospy
 import numpy as np
+
+from control_msgs.msg import JointTrajectoryControllerState
+from sensor_msgs.msg import JointState
 
 def R_x (ang):
     return np.array([[1, 0, 0, 0],
@@ -46,6 +50,7 @@ def FK_LA (LShoulderPitch = 0, LShoulderRoll = 0, LElbowYaw = 0, LElbowRoll = 0)
     alp = [-np.pi/2, np.pi/2, np.pi/2, -np.pi/2]
     d = [0, 0, 105.00, 0]
     the = [LShoulderPitch, LShoulderRoll+np.pi/2, LElbowYaw, LElbowRoll]
+
     Ab = A([0, 98.00, 100.00])
     Ae = A([57.75+55.95, 0, 0])
     R = R_z(-np.pi/2)
@@ -53,6 +58,7 @@ def FK_LA (LShoulderPitch = 0, LShoulderRoll = 0, LElbowYaw = 0, LElbowRoll = 0)
     Tn = T_n(a, alp, d, the, [Ab])
     Tn.append(R)
     Tn.append(Ae)
+
     T0n = T_0n(Tn)
     
     return T0n
@@ -115,12 +121,35 @@ def FK_RL (RHipYawPitch = 0, RHipRoll = 0, RHipPitch = 0, RKneePitch = 0, RAnkle
 
     return T0n
 
+def find_joint_val (msg, joints = []):
+    joint_values = []
+    for jn in joints:
+        for jm in range(26):
+            if msg.name[jm] == jn:
+                joint_values.append(msg.position[jm])
+    return joint_values
+
+def fk (time):
+    joint_msg = rospy.wait_for_message('/joint_states', JointState)
+
+    la = find_joint_val(joint_msg, ["LShoulderPitch", "LShoulderRoll", "LElbowYaw", "LElbowRoll"])
+    LA = FK_LA(la[0], la[1], la[2], la[3])
+    print ("Left arm:\n", LA,"\n")
+
+    ra = find_joint_val(joint_msg, ["RShoulderPitch", "RShoulderRoll", "RElbowYaw", "RElbowRoll"])
+    RA = FK_RA(ra[0], ra[1], ra[2], ra[3])
+    print ("Right arm:\n", RA,"\n")
+    
+    ll = find_joint_val(joint_msg, ["LHipYawPitch", "LHipRoll", "LHipPitch", "LKneePitch", "LAnklePitchJoint", "LAnkleRoll"])
+    LL = FK_LL(ll[0], ll[1], ll[2], ll[3], ll[4], ll[5])
+    print ("Left leg:\n", LL,"\n")
+
+    rl = find_joint_val(joint_msg, ["RHipYawPitch", "RHipRoll", "RHipPitch", "RKneePitch", "RAnklePitchJoint", "RAnkleRoll"])
+    RL = FK_RL(rl[0], rl[1], rl[2], rl[3], rl[4], rl[5])
+    print ("Right leg:\n", RL,"\n")
+
+    
 if __name__ == '__main__':
-    FKLA = FK_LA ()
-    print ("Left arm:\n",FKLA,"\n")
-    FKRA = FK_RA ()
-    print ("Right arm:\n",FKRA,"\n")
-    FKLL = FK_LL ()
-    print ("Left leg:\n",FKLL,"\n")
-    FKRL = FK_RL ()
-    print ("Right leg:\n",FKRL,"\n")
+    rospy.init_node("nao_fk")
+    rospy.Timer(rospy.Duration(.01), fk)
+    rospy.spin()
