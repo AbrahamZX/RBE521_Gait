@@ -1,6 +1,5 @@
 import numpy as np
 from scipy.spatial.transform import Rotation as R
-import nao_fk as fk
 
 def sixvec2transmat(P,eul='xyz',deg=False):
     rot = R.from_euler(eul,P[3:],degrees=deg)
