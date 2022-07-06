@@ -7,7 +7,7 @@ from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 def pub_test ():
 	# Generating the trajectory messages for the controllers
 	
-	# Left Arm
+    # Left Arm
     la = JointTrajectory()
     la.joint_names = ['LShoulderPitch', 'LShoulderRoll', 'LElbowYaw', 'LElbowRoll', 'LWristYaw']
     lapt = JointTrajectoryPoint()
@@ -51,7 +51,7 @@ def pub_test ():
     ll = JointTrajectory()
     ll.joint_names = ['LHipRoll', 'LHipPitch', 'LKneePitch']
     llpt = JointTrajectoryPoint()
-    llpt.positions = [0, -pi/2, pi/3]
+    llpt.positions = [0, 0, 0]
     llpt.time_from_start = rospy.Duration.from_sec(1)
     ll.points.append(llpt)    
     
