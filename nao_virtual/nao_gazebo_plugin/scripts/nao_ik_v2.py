@@ -25,7 +25,7 @@ def IK_LL(T=fk.FK_LL()):
     the6min= -0.397880
     the6max=  0.769001
 
-    soln = [[],[],[],[],[],[]]
+    soln = []
 
 
     T_hat = np.linalg.pinv(Ab)@T@np.linalg.pinv(Ae)
@@ -104,12 +104,14 @@ def IK_LL(T=fk.FK_LL()):
                         #print("Trying:\n")
                         #print(the1,the2,the3,the4,the5,the6)
                         if checkGoodLL(the1,the2,the3,the4,the5,the6,T):
-                            soln[0].append(the1)
-                            soln[1].append(the2)
-                            soln[2].append(the3)
-                            soln[3].append(the4)
-                            soln[4].append(the5)
-                            soln[5].append(the6)
+
+                            soln.append([the1,the2,the3,the4,the5,the6])
+                            #soln[0].append(the1)
+                            #soln[1].append(the2)
+                            #soln[2].append(the3)
+                            #soln[3].append(the4)
+                            #soln[4].append(the5)
+                            #soln[5].append(the6)
     return soln
 
 def IK_RL(T=fk.FK_RL()):
@@ -134,7 +136,7 @@ def IK_RL(T=fk.FK_RL()):
     the6min= -0.785875
     the6max= 0.388676
 
-    soln = [[],[],[],[],[],[]]
+    soln = []
 
 
     T_hat = np.linalg.pinv(Ab)@T@np.linalg.pinv(Ae)
@@ -213,12 +215,15 @@ def IK_RL(T=fk.FK_RL()):
                         #print("Trying:\n")
                         #print(the1,the2,the3,the4,the5,the6)
                         if checkGoodRL(the1,the2,the3,the4,the5,the6,T):
-                            soln[0].append(the1)
-                            soln[1].append(the2)
-                            soln[2].append(the3)
-                            soln[3].append(the4)
-                            soln[4].append(the5)
-                            soln[5].append(the6)
+
+                            soln.append([the1,the2,the3,the4,the5,the6])
+
+                            #soln[0].append(the1)
+                            #soln[1].append(the2)
+                            #soln[2].append(the3)
+                            #soln[3].append(the4)
+                            #soln[4].append(the5)
+                            #soln[5].append(the6)
     return soln
 
 def T_n_s (a, alp, d, the):
