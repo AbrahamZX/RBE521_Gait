@@ -59,6 +59,7 @@ def IK_LL(T=fk.FK_LL()):
         bot = ThighLength**2*np.sin(the4)**2 + (TibiaLength+ThighLength*np.cos(the4))**2
 
         the5 = np.arcsin(-top/bot)
+        #print(the6)
 
         for j in range(2):
             
@@ -69,9 +70,11 @@ def IK_LL(T=fk.FK_LL()):
                 continue
 
             T34 = T_n_s(-ThighLength,0,0,the4)
+            #print(T34)
             T45 = T_n_s(-TibiaLength,0,0,the5)
-
+            #print(T45)
             T_tprime = T_prime_tilde@np.linalg.pinv(T34@T45)
+            #print(T_tprime)
 
             the2 = np.arccos(T_tprime[1,2])-np.pi/4
 
@@ -163,6 +166,7 @@ def IK_RL(T=fk.FK_RL()):
             continue
 
         T56 = T_n_s(0,-np.pi/2,0,the6)
+
         T_prime_tilde = T_tilde@np.linalg.pinv(T56@fk.R_z(np.pi)@fk.R_y(-np.pi/2))
         T_dprime = np.linalg.pinv(T_prime_tilde)
 
@@ -181,7 +185,6 @@ def IK_RL(T=fk.FK_RL()):
 
             T34 = T_n_s(-ThighLength,0,0,the4)
             T45 = T_n_s(-TibiaLength,0,0,the5)
-
             T_tprime = T_prime_tilde@np.linalg.pinv(T34@T45)
 
             the2 = np.arccos(T_tprime[1,2])-np.pi/4
@@ -202,7 +205,7 @@ def IK_RL(T=fk.FK_RL()):
                         the3 = np.pi - the3
                     #print("T3: ", the3)
                     if the3 < the3min or the3 > the3max:
-                        continue
+                       continue
 
                     for m in range(2):
                         
@@ -250,14 +253,20 @@ def checkGoodLL(t1,t2,t3,t4,t5,t6,T_goal):
 
     pos_err = np.sqrt(x_err**2 + y_err**2 + z_err**2)
 
+    #print(x_err, y_err, z_err)
+    #print(pos_err)
+
     Rx_err = P_goal[3] - P_cur[3]
     Ry_err = P_goal[4] - P_cur[4]
     Rz_err = P_goal[5] - P_cur[5]
 
+    #print(Rx_err,Ry_err,Rz_err)
 
     rot_err = np.sqrt(Rx_err**2 + Ry_err**2 + Rz_err**2)
+
+    #print(rot_err)
     
-    if pos_err < 1 and rot_err < 0.1:
+    if pos_err < 25.4 and rot_err < 0.5:
         return True
     else: return False
 def checkGoodRL(t1,t2,t3,t4,t5,t6,T_goal):
@@ -268,9 +277,9 @@ def checkGoodRL(t1,t2,t3,t4,t5,t6,T_goal):
     P_cur = tu.transmat2sixvec(T_cur)
 
     #allow 1 mm position error and 0.1 rad rotation error
-    x_err = P_goal[0] - P_cur[0]
-    y_err = P_goal[1] - P_cur[1]
-    z_err = P_goal[2] - P_cur[2]
+    x_err = T_goal[3,0] - T_cur[3,0]
+    y_err = T_goal[3,1] - T_cur[3,1]
+    z_err = T_goal[3,2] - T_cur[3,2]
 
     pos_err = np.sqrt(x_err**2 + y_err**2 + z_err**2)
 
@@ -286,13 +295,20 @@ def checkGoodRL(t1,t2,t3,t4,t5,t6,T_goal):
 
 if __name__ == "__main__":
     IKLL = IK_LL()
+    print("Left Leg: ")
     print(IKLL)
     IKRL = IK_RL()
+    print("Right Leg: ")
     print(IKRL)
-    LLT=[[9.91492293e-01,  2.87930223e-04, -1.30165091e-01,  4.71580516e+00],
+    LLT=np.array([[9.91492293e-01,  2.87930223e-04, -1.30165091e-01,  4.71580516e+00],
         [-2.75089191e-04,  9.99999955e-01,  1.16631872e-04,  4.99708743e+01],
         [ 1.30165119e-01, -7.98325924e-05,  9.91492327e-01, -3.17259889e+02],
-        [0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  1.00000000e+00]]
-
+        [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  1.00000000e+00]])
+    print("\nCustom test \n")
     IKLL = IK_LL(T = LLT)
+    print(IKLL)
+
+    print("\nCustom Test 2\n")
+    IKLL = IK_LL(T = fk.FK_LL(0.5,0.5,0.4,0.5,0.5,.5))
+
     print(IKLL)
