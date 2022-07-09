@@ -1,3 +1,4 @@
+from hashlib import shake_128
 import numpy as np
 import nao_fk as fk
 import trans_utils as tu
@@ -107,15 +108,18 @@ def IK_LL(T=fk.FK_LL()):
                         #print("Trying:\n")
                         #print(the1,the2,the3,the4,the5,the6)
                         if checkGoodLL(the1,the2,the3,the4,the5,the6,T):
-
-                            soln.append([the1,the2,the3,the4,the5,the6])
+                            if soln == []:
+                                soln.append([the1,the2,the3,the4,the5,the6])
+                            else:
+                                soln = checkBetterLL(soln,[the1,the2,the3,the4,the5,the6],T)
+                            
                             #soln[0].append(the1)
                             #soln[1].append(the2)
                             #soln[2].append(the3)
                             #soln[3].append(the4)
                             #soln[4].append(the5)
                             #soln[5].append(the6)
-    return soln
+    return soln[0]
 
 def IK_RL(T=fk.FK_RL()):
     ThighLength = 100
@@ -218,16 +222,18 @@ def IK_RL(T=fk.FK_RL()):
                         #print("Trying:\n")
                         #print(the1,the2,the3,the4,the5,the6)
                         if checkGoodRL(the1,the2,the3,the4,the5,the6,T):
-
-                            soln.append([the1,the2,the3,the4,the5,the6])
-
+                            if soln == []:
+                                soln.append([the1,the2,the3,the4,the5,the6])
+                            else:
+                                soln = checkBetterRL(soln,[the1,the2,the3,the4,the5,the6],T)
+                            
                             #soln[0].append(the1)
                             #soln[1].append(the2)
                             #soln[2].append(the3)
                             #soln[3].append(the4)
                             #soln[4].append(the5)
                             #soln[5].append(the6)
-    return soln
+    return soln[0]
 
 def T_n_s (a, alp, d, the):
     # CANNOT SUBSTITUTE fk.T_n --> creates 3D arrays and relies on list structure
@@ -293,6 +299,33 @@ def checkGoodRL(t1,t2,t3,t4,t5,t6,T_goal):
         return True
     else: return False
 
+
+def checkBetterRL(s1,s2,goal):
+    P1 = fk.FK_RL(s1[0][0],s1[0][1],s1[0][2],s1[0][3],s1[0][4],s1[0][5])
+    P2 = fk.FK_RL(s2[0],s2[1],s2[2],s2[3],s2[4],s2[5])
+    g1 = P1[0,3]**2+P1[1,3]**2+P1[2,3]**2
+    g2 = P2[0,3]**2+P2[1,3]**2+P2[2,3]**2
+    g_goal = goal[0,3]**2 + goal[1,3]**2 + goal[2,3]**2
+    q1 = np.abs(g1-g_goal)
+    q2 = np.abs(g2-g_goal)
+
+    if q2 < q1:
+        return s2
+    else: return s1
+
+def checkBetterLL(s1,s2,goal):
+    P1 = fk.FK_LL(s1[0][0],s1[0][1],s1[0][2],s1[0][3],s1[0][4],s1[0][5])
+    P2 = fk.FK_LL(s2[0],s2[1],s2[2],s2[3],s2[4],s2[5])
+    g1 = P1[0,3]**2+P1[1,3]**2+P1[2,3]**2
+    g2 = P2[0,3]**2+P2[1,3]**2+P2[2,3]**2
+    g_goal = goal[0,3]**2 + goal[1,3]**2 + goal[2,3]**2
+    q1 = np.abs(g1-g_goal)
+    q2 = np.abs(g2-g_goal)
+
+    if q2 < q1:
+        return s2
+    else: return s1
+
 if __name__ == "__main__":
     IKLL = IK_LL()
     print("Left Leg: ")
@@ -306,9 +339,4 @@ if __name__ == "__main__":
         [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  1.00000000e+00]])
     print("\nCustom test \n")
     IKLL = IK_LL(T = LLT)
-    print(IKLL)
-
-    print("\nCustom Test 2\n")
-    IKLL = IK_LL(T = fk.FK_LL(0.5,0.5,0.4,0.5,0.5,.5))
-
     print(IKLL)
