@@ -140,8 +140,12 @@ def IK_LA(T=fk.FK_LA()):
     T_prime = np.linalg.pinv(Ab)@T@np.linalg.pinv(Ae)
     T_dprime = np.linalg.pinv(T_prime)@np.linalg.pinv(fk.R_z(np.pi/2))
 
+    print(T_dprime)
+
     the3 = np.arcsin(T_dprime[2,3]/l1)
+    print(the3)
     the4 = np.arccos((l2*T_dprime[1,3]-l1*T_dprime[0,3]*np.cos(the3))/(l2**2 + l1**2*np.cos(the3)**2))
+    print((l2*T_dprime[1,3]-l1*T_dprime[0,3]*np.cos(the3))/(l2**2 + l1**2*np.cos(the3)**2))
     T23 = T_n_s(ElbowOffsetY,np.pi/2,UpperArmLength,the3)
     T34 = T_n_s(0,-np.pi/2,0,the4)
     T_tprime = T_prime@np.linalg.pinv(T23)@np.linalg.pinv(T34)
@@ -167,3 +171,10 @@ if __name__ == '__main__':
     print("Left Arm: \n",IKLA,"\n")
     IKRA = IK_RA ()
     print("Right Arm: \n",IKRA,"\n")
+
+    LAT = [[ 3.46783781e-02, -9.99398524e-01,  1.95160683e-07,  3.92084978e+00],
+          [ 3.10778460e-04,  1.09790573e-05,  9.99999952e-01,  1.13067987e+02],
+          [-9.99398476e-01, -3.46783764e-02,  3.10972270e-04, -1.18626935e+02],
+          [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  1.00000000e+00]]
+    IKLAT = IK_LA(LAT)
+
