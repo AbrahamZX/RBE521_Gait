@@ -236,6 +236,7 @@ def T_n_s (a, alp, d, the):
     return Tn
 
 def checkGoodLL(t1,t2,t3,t4,t5,t6,T_goal):
+    T_goal = np.array(T_goal)
     P_goal = tu.transmat2sixvec(T_goal)
 
     T_cur = fk.FK_LL(t1,t2,t3,t4,t5,t6)
@@ -246,11 +247,13 @@ def checkGoodLL(t1,t2,t3,t4,t5,t6,T_goal):
     y_err = P_goal[1] - P_cur[1]
     z_err = P_goal[2] - P_cur[2]
 
+
     pos_err = np.sqrt(x_err**2 + y_err**2 + z_err**2)
 
     Rx_err = P_goal[3] - P_cur[3]
     Ry_err = P_goal[4] - P_cur[4]
     Rz_err = P_goal[5] - P_cur[5]
+
 
     rot_err = np.sqrt(Rx_err**2 + Ry_err**2 + Rz_err**2)
     
@@ -258,6 +261,7 @@ def checkGoodLL(t1,t2,t3,t4,t5,t6,T_goal):
         return True
     else: return False
 def checkGoodRL(t1,t2,t3,t4,t5,t6,T_goal):
+    T_goal = np.array(T_goal)
     P_goal = tu.transmat2sixvec(T_goal)
 
     T_cur = fk.FK_RL(t1,t2,t3,t4,t5,t6)
@@ -285,3 +289,10 @@ if __name__ == "__main__":
     print(IKLL)
     IKRL = IK_RL()
     print(IKRL)
+    LLT=[[ 9.91492293e-01,  2.87930223e-04, -1.30165091e-01,  4.71580516e+00],
+        [-2.75089191e-04,  9.99999955e-01,  1.16631872e-04,  4.99708743e+01],
+        [ 1.30165119e-01, -7.98325924e-05,  9.91492327e-01, -3.17259889e+02],
+        [0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  1.00000000e+00]]
+
+    IKLL = IK_LL(T = LLT)
+    print(IKLL)
