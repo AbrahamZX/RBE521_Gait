@@ -3,36 +3,20 @@ import rospy
 from math import pi
 from std_msgs.msg import Header
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
+from helpers import generate_leg_positions
+
 
 def pub_joint_states(event):
     t = event.current_real.to_sec()
     # Generating the trajectory messages for the controllers
-    Lstep = .05  # 5cm
-    FootHeight = .05
-    t1 = 2.5  # seconds
-    t2 = 5  # seconds
-    t3 = 7.5  # seconds
-    t4 = 10  # seconds
 
-    # x and z positions for gait based on NaoDynamics paper
-    #  Dynamic Modeling and Control Study of the NAO Biped Robot with
-    #  Improved Trajectory Planning by Ehsan Hasemi
-    if t % t4 < t1:
-        x = -Lstep
-        z = FootHeight
-    elif t % t4 < t2:
-        x = -1.2848*t**3 + 1.3202*t**2 - 0.1938*t - 0.0435
-        z = -19.724*t**3 + 10.2116*t**2 - 1.2359*t + 0.0412
-    elif t % t4 < t3:
-        x = -1.5144*t**3 + 1.5855*t**2 - 0.2334*t - 0.0404
-        z = 8.1169*t**3 - 9.8338*t**2 + 3.575*t - 0.34347
-    else:
-        x = Lstep
-        z = FootHeight
+    xr, zr, xl, zl = generate_leg_positions(t)
+
 
     # todo: import IK and use that function here to get joint positions
     #  then use that to update the joint positions for ROS
-    # jointposition = IK(x,0,z)
+    # right_leg_joint_positions = IK(xr,0,zr)
+    # left_leg_joint_positions = IK(xl,0,zl)
 
     # todo: this is placeholder.  Update to output from IK when available.
     l_hip_roll = 0
@@ -122,6 +106,10 @@ def pub_joint_states(event):
     rf.points.append(rfpt)
         
     # Publishing all the joint position messages
+    left_arm.publish(la)
+    right_arm.publish(ra)
+    left_hand.publish(lh)
+    right_hand.publish(rh)
     pelvis.publish(p)
     left_leg.publish(ll)
     right_leg.publish(rl)
