@@ -30,9 +30,11 @@ def csv2transmat(file,n):
     T_r[0,3] = coords[1][n]
     T_r[1,3] = -50
     T_r[2,3] = coords[2][n]
+    T_r[3,3] = 1
     T_l[0,3] = coords[3][n]
     T_l[1,3] = 50
     T_l[2,3] = coords[4][n]
+    T_l[3,3] = 1
     return T_r, T_l
 
 
