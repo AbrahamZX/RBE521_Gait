@@ -173,7 +173,7 @@ def IK_RL(T=fk.FK_RL()):
         print("WARNING: using arccos(1) due to excessively large input")
     elif val < -1:
         the4prime = -1
-        print("WARNING: using arccos(-11) due to excessively small input")
+        print("WARNING: using arccos(-1) due to excessively small input")
     else: 
         the4prime = np.arccos(val)
     the4 = np.pi-the4prime
