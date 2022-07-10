@@ -310,7 +310,7 @@ def checkBetterRL(s1,s2,goal):
     q2 = np.abs(g2-g_goal)
 
     if q2 < q1:
-        return s2
+        return [s2]
     else: return s1
 
 def checkBetterLL(s1,s2,goal):
@@ -323,7 +323,7 @@ def checkBetterLL(s1,s2,goal):
     q2 = np.abs(g2-g_goal)
 
     if q2 < q1:
-        return s2
+        return [s2]
     else: return s1
 
 if __name__ == "__main__":
