@@ -18,7 +18,7 @@ def transmat2sixvec(T,eul='xyz',deg=False):
     return P
 
 def quat2transmat(x,y,z,i,j,k,l):
-    rot = R.from_quat(i,j,k,l)
+    rot = R.from_quat([i,j,k,l])
     T = rot.as_matrix()
     T = np.vstack((T,[0,0,0]))
     vec = np.array([[x], [y], [z], [1]])
