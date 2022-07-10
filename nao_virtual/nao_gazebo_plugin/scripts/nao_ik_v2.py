@@ -36,7 +36,7 @@ def IK_LL(T=fk.FK_LL()):
     #the4prime = np.arccos((ThighLength**2 + TibiaLength**2 - d**2)/(2*TibiaLength*ThighLength))
     
     d = T_prime[0,3]**2+T_prime[1,3]**2+T_prime[2,3]**2
-    the4prime = np.arccos(np.round(np.sqrt((ThighLength**2 + TibiaLength**2 - d)**2)/(2*TibiaLength*ThighLength),4)) #rounding here prevents numerical error from pushing us to slighly out of arccos domain
+    the4prime = np.arccos(np.round((ThighLength**2 + TibiaLength**2 - np.sqrt(d**2))/(2*TibiaLength*ThighLength),4)) #rounding here prevents numerical error from pushing us to slighly out of arccos domain
     
     the4 = np.pi-the4prime
 
@@ -153,7 +153,7 @@ def IK_RL(T=fk.FK_RL()):
     #the4prime = np.arccos((ThighLength**2 + TibiaLength**2 - d**2)/(2*TibiaLength*ThighLength))
     
     d = T_prime[0,3]**2+T_prime[1,3]**2+T_prime[2,3]**2
-    the4prime = np.arccos(np.round(np.sqrt((ThighLength**2 + TibiaLength**2 - d)**2)/(2*TibiaLength*ThighLength),4)) #rounding here prevents numerical error from pushing us to slighly out of arccos domain
+    the4prime = np.arccos(np.round((ThighLength**2 + TibiaLength**2 - np.sqrt(d**2))/(2*TibiaLength*ThighLength),4)) #rounding here prevents numerical error from pushing us to slighly out of arccos domain
     
     the4 = np.pi-the4prime
 
