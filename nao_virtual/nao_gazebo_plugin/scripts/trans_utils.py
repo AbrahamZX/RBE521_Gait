@@ -1,4 +1,5 @@
 import numpy as np
+import csv
 from scipy.spatial.transform import Rotation as R
 
 def sixvec2transmat(P,eul='xyz',deg=False):
@@ -15,6 +16,27 @@ def transmat2sixvec(T,eul='xyz',deg=False):
     P[0:3] = T[0:3,3]
     P[3:5] = rot.as_euler(eul,deg)
     return P
+
+
+def csv2transmat(file,n):
+    T_r = np.zeros(4)
+    T_l = np.zeros(4)
+    coords=[]
+    with open(file) as csvfile:  #uses csv package to take in data
+        data = csv.reader(csvfile,delimiter=',')
+        for row in data:     
+            coords.append([row])
+
+    T_r[0,3] = coords[1][n]
+    T_r[1,3] = -50
+    T_r[2,3] = coords[2][n]
+    T_l[0,3] = coords[3][n]
+    T_l[1,3] = 50
+    T_l[2,3] = coords[4][n]
+    return T_r, T_l
+
+
+
 
 if __name__=='__main__':
     a = [1,2,3,0.1,0.2,0.3]
