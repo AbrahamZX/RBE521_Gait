@@ -328,15 +328,20 @@ def checkBetterLL(s1,s2,goal):
 
 if __name__ == "__main__":
     IKLL = IK_LL()
-    print("Left Leg: ")
-    print(IKLL)
+    #print("Left Leg: ")
+    #print(IKLL)
     IKRL = IK_RL()
-    print("Right Leg: ")
-    print(IKRL)
+    #print("Right Leg: ")
+    #print(IKRL)
     LLT=np.array([[9.91492293e-01,  2.87930223e-04, -1.30165091e-01,  4.71580516e+00],
         [-2.75089191e-04,  9.99999955e-01,  1.16631872e-04,  4.99708743e+01],
         [ 1.30165119e-01, -7.98325924e-05,  9.91492327e-01, -3.17259889e+02],
         [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  1.00000000e+00]])
-    print("\nCustom test \n")
+    #print("\nCustom test \n")
     IKLL = IK_LL(T = LLT)
-    print(IKLL)
+    #print(IKLL)
+
+    print("\nCustom Test 2 \n")
+
+    LLT2 = fk.FK_RL([0, 0, -np.pi/8, np.pi/4, -np.pi/6, 0])
+    print(IK_LL(LLT2))

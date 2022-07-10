@@ -167,6 +167,7 @@ def IK_RL(T=fk.FK_RL()):
         if n != 0:
             the6 = 0
         if the6 < the6min or the6 > the6max:
+            print("skipping t6= ",the6)
             continue
 
         for i in range(2):
@@ -174,6 +175,7 @@ def IK_RL(T=fk.FK_RL()):
                 the4 = -the4
             #print("T4: ", the4)
             if the4 < the4min or the4 > the4max:
+                print("skipping t4= ",the4)
                 continue
 
             T56 = T_n_s(0,-np.pi/2,0,the6)
@@ -192,6 +194,7 @@ def IK_RL(T=fk.FK_RL()):
                     the5 = np.pi - the5
                 #print("T5: ", the5)
                 if the5 < the5min or the5 > the5max:
+                    print("skipping t5= ",the5)
                     continue
 
                 T34 = T_n_s(-ThighLength,0,0,the4)
@@ -205,29 +208,33 @@ def IK_RL(T=fk.FK_RL()):
                         the2 = -np.arccos(T_tprime[1,2])-np.pi/4
                     #print("T2: ", the2)
                     if the2 < the2min or the2 > the2max:
+                        print("skipping t2= ",the2)
                         continue
             
-                    the3 = np.arcsin(T_tprime[1,1]/np.sin(the2+np.pi/4))
+                    the3 = np.arcsin(T_tprime[1,1]/np.sin(the2-np.pi/4))
 
-                    the1 = np.pi/2 + np.arccos(T_tprime[0,2]/np.sin(the2+np.pi/4))
+                    the1 = np.pi/2 + np.arccos(T_tprime[0,2]/np.sin(the2-np.pi/4))
 
                     for l in range(2):
                         if l != 0: 
                             the3 = np.pi - the3
                         #print("T3: ", the3)
                         if the3 < the3min or the3 > the3max:
+                            print("skipping t3= ",the3)
                             continue
 
                         for m in range(2):
                             if m != 0:
-                                the1 = np.pi/2 - np.arccos(T_tprime[0,2]/np.sin(the2+np.pi/4))
+                                the1 = np.pi/2 - np.arccos(T_tprime[0,2]/np.sin(the2-np.pi/4))
                             #print("T1: ",the1)
                             if the1 < the1min or the1 > the1max:
+                                print("skipping t1= ",the1)
                                 continue
 
                             #print("Trying:\n")
                             #print(the1,the2,the3,the4,the5,the6)
                             if checkGoodRL(the1,the2,the3,the4,the5,the6,T):
+                                print("Solution found!")
                                 if soln == []:
                                     soln.append([the1,the2,the3,the4,the5,the6])
                                 else:
@@ -300,11 +307,15 @@ def checkGoodRL(t1,t2,t3,t4,t5,t6,T_goal):
 
     pos_err = np.sqrt(x_err**2 + y_err**2 + z_err**2)
 
+    print("trying:",t1,t2,t3,t4,t5,t6)
+    print(pos_err)
+
     Rx_err = P_goal[3] - P_cur[3]
     Ry_err = P_goal[4] - P_cur[4]
     Rz_err = P_goal[5] - P_cur[5]
 
     rot_err = np.sqrt(Rx_err**2 + Ry_err**2 + Rz_err**2)
+    print(rot_err)
     
     if pos_err < 25.4 and rot_err < 0.50:
         return True
@@ -334,20 +345,23 @@ def checkBetterLL(s1,s2,goal):
     q2 = np.abs(g2-g_goal)
 
     if q2 < q1:
+        print("better")
         return s2
-    else: return s1
+    else: 
+        print("worse")
+        return s1
 
 if __name__ == "__main__":
-    IKLL = IK_LL()
     print("Left Leg: ")
+    IKLL = IK_LL()
     print(IKLL)
-    IKRL = IK_RL()
     print("Right Leg: ")
-    print(IKRL)
-    LLT=np.array([[9.91492293e-01,  2.87930223e-04, -1.30165091e-01,  4.71580516e+00],
-        [-2.75089191e-04,  9.99999955e-01,  1.16631872e-04,  4.99708743e+01],
-        [ 1.30165119e-01, -7.98325924e-05,  9.91492327e-01, -3.17259889e+02],
-        [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  1.00000000e+00]])
+    IKRL = IK_RL()
+    
+    #LLT=np.array([[9.91492293e-01,  2.87930223e-04, -1.30165091e-01,  4.71580516e+00],
+    #    [-2.75089191e-04,  9.99999955e-01,  1.16631872e-04,  4.99708743e+01],
+    #    [ 1.30165119e-01, -7.98325924e-05,  9.91492327e-01, -3.17259889e+02],
+    #    [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  1.00000000e+00]])
     print("\nCustom test \n")
-    IKLL = IK_LL(T = LLT)
-    print(IKLL)
+    IKRL = IK_RL(fk.FK_RL(0, 0, -np.pi/8, np.pi/4, -np.pi/6, 0))
+    #print(IKRL)
