@@ -33,12 +33,12 @@ def csv2transmat(file,n):
         data = csv.reader(csvfile,delimiter=',')
         for row in data: 
             coords.append(row[n])
-    normalizing_factor = (float(coords[1])+float(coords[3]))/2
-    xr = float(coords[1]) - normalizing_factor
-    xl = float(coords[3]) - normalizing_factor
+    #normalizing_factor = (float(coords[1])+float(coords[3]))/2
+    xr = float(coords[1]) #- normalizing_factor
+    xl = float(coords[3]) #- normalizing_factor
     T_r[0,3] = xr*1000
     T_r[1,3] = -50
-    T_r[2,3] = float(coords[2])*1000 - (85+100+102.9+45.19)
+    T_r[2,3] = float(coords[2])*1000 #- (85+100+102.9+45.19)
     T_r[3,3] = 1
 
     T_r[0,0] = 1
@@ -47,7 +47,7 @@ def csv2transmat(file,n):
 
     T_l[0,3] = xl*1000
     T_l[1,3] = 50
-    T_l[2,3] = float(coords[4])*1000 - (85+100+102.9+45.19)
+    T_l[2,3] = float(coords[4])*1000 #- (85+100+102.9+45.19)
     T_l[3,3] = 1
 
     T_l[0,0] = 1
