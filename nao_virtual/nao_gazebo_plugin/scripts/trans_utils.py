@@ -19,26 +19,26 @@ def transmat2sixvec(T,eul='xyz',deg=False):
 
 
 def csv2transmat(file,n):
-    T_r = np.zeros(4)
-    T_l = np.zeros(4)
+    T_r = np.zeros((4,4))
+    T_l = np.zeros((4,4))
     coords=[]
     with open(file) as csvfile:  #uses csv package to take in data
         data = csv.reader(csvfile,delimiter=',')
-        for row in data:     
-            coords.append([row])
+        for row in data: 
+            coords.append(row[n])
 
-    T_r[0,3] = coords[1][n]
+    T_r[0,3] = coords[1]
     T_r[1,3] = -50
-    T_r[2,3] = coords[2][n]
+    T_r[2,3] = coords[2]
     T_r[3,3] = 1
 
     T_r[0,0] = 1
     T_r[1,1] = 1
     T_r[2,2] = 1
 
-    T_l[0,3] = coords[3][n]
+    T_l[0,3] = coords[3]
     T_l[1,3] = 50
-    T_l[2,3] = coords[4][n]
+    T_l[2,3] = coords[4]
     T_l[3,3] = 1
 
     T_l[0,0] = 1
@@ -57,5 +57,7 @@ if __name__=='__main__':
     print(b)
     c = transmat2sixvec(b)
     print(c)
+    T_r, T_l = csv2transmat('gait_steps.csv',5)
+    print(T_r)
+    print(T_l)
 
-    
