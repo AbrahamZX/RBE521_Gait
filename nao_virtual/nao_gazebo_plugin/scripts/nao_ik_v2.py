@@ -200,9 +200,9 @@ def IK_RL(T=fk.FK_RL()):
                 if the2 < the2min or the2 > the2max:
                     continue
             
-                the3 = np.arcsin(T_tprime[1,1]/np.sin(the2+np.pi/4))
+                the3 = np.arcsin(T_tprime[1,1]/np.sin(the2-np.pi/4))
 
-                the1 = np.pi/2 + np.arccos(T_tprime[0,2]/np.sin(the2+np.pi/4))
+                the1 = np.pi/2 + np.arccos(T_tprime[0,2]/np.sin(the2-np.pi/4))
 
                 for l in range(2):
                     if l != 0: 
@@ -214,7 +214,7 @@ def IK_RL(T=fk.FK_RL()):
                     for m in range(2):
                         
                         if m != 0:
-                            the1 = np.pi/2 - np.arccos(T_tprime[0,2]/np.sin(the2+np.pi/4))
+                            the1 = np.pi/2 - np.arccos(T_tprime[0,2]/np.sin(the2-np.pi/4))
                         #print("T1: ",the1)
                         if the1 < the1min or the1 > the1max:
                             continue
