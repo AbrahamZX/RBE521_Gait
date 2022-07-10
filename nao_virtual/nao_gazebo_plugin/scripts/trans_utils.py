@@ -27,18 +27,18 @@ def csv2transmat(file,n):
         for row in data: 
             coords.append(row[n])
 
-    T_r[0,3] = float(coords[1])
+    T_r[0,3] = float(coords[1])*1000
     T_r[1,3] = -50
-    T_r[2,3] = float(coords[2]) - (85+100+102.9+45.19)
+    T_r[2,3] = float(coords[2])*1000 - (85+100+102.9+45.19)
     T_r[3,3] = 1
 
     T_r[0,0] = 1
     T_r[1,1] = 1
     T_r[2,2] = 1
 
-    T_l[0,3] = float(coords[3])
+    T_l[0,3] = float(coords[3])*1000
     T_l[1,3] = 50
-    T_l[2,3] = float(coords[4]) - (85+100+102.9+45.19)
+    T_l[2,3] = float(coords[4])*1000 - (85+100+102.9+45.19)
     T_l[3,3] = 1
 
     T_l[0,0] = 1
