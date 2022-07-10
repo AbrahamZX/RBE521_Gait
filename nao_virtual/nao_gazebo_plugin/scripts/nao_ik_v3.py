@@ -34,7 +34,16 @@ def IK_LL(T=fk.FK_LL()):
     T_prime = np.linalg.pinv(T_tilde)
         
     d = T_prime[0,3]**2+T_prime[1,3]**2+T_prime[2,3]**2
-    the4prime = np.arccos(np.round((ThighLength**2 + TibiaLength**2 - np.sqrt(d**2))/(2*TibiaLength*ThighLength),4)) #rounding here prevents numerical error from pushing us to slighly out of arccos domain
+    #rounding here prevents numerical error from pushing us to slighly out of arccos domain
+    val = np.round((ThighLength**2 + TibiaLength**2 - d)/(2*TibiaLength*ThighLength),4)
+    if val > 1:
+        the4prime = 1
+    elif val < -1:
+        the4prime = -1
+    else: 
+        the4prime = np.arccos(val)
+
+
     
     the4 = np.pi-the4prime
 
@@ -157,8 +166,16 @@ def IK_RL(T=fk.FK_RL()):
     #the4prime = np.arccos((ThighLength**2 + TibiaLength**2 - d**2)/(2*TibiaLength*ThighLength))
     
     d = T_prime[0,3]**2+T_prime[1,3]**2+T_prime[2,3]**2
-    the4prime = np.arccos(np.round((ThighLength**2 + TibiaLength**2 - np.sqrt(d**2))/(2*TibiaLength*ThighLength),4)) #rounding here prevents numerical error from pushing us to slighly out of arccos domain
-    
+    #rounding here prevents numerical error from pushing us to slighly out of arccos domain
+    val = np.round((ThighLength**2 + TibiaLength**2 - d)/(2*TibiaLength*ThighLength),4)
+    if val > 1:
+        the4prime = 1
+        print("WARNING: using arccos(1) due to excessively large input")
+    elif val < -1:
+        the4prime = -1
+        print("WARNING: using arccos(-11) due to excessively small input")
+    else: 
+        the4prime = np.arccos(val)
     the4 = np.pi-the4prime
 
     the6 = np.arctan2(T_prime[1,3],T_prime[2,3]) 
