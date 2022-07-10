@@ -57,3 +57,5 @@ if __name__=='__main__':
     print(b)
     c = transmat2sixvec(b)
     print(c)
+
+    
