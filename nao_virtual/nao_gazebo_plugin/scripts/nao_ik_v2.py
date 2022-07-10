@@ -1,3 +1,4 @@
+from hashlib import shake_128
 import numpy as np
 import nao_fk as fk
 import trans_utils as tu
@@ -35,7 +36,7 @@ def IK_LL(T=fk.FK_LL()):
     #the4prime = np.arccos((ThighLength**2 + TibiaLength**2 - d**2)/(2*TibiaLength*ThighLength))
     
     d = T_prime[0,3]**2+T_prime[1,3]**2+T_prime[2,3]**2
-    the4prime = np.arccos(np.round((ThighLength**2 + TibiaLength**2 - d)/(2*TibiaLength*ThighLength),4)) #rounding here prevents numerical error from pushing us to slighly out of arccos domain
+    the4prime = np.arccos(np.round((ThighLength**2 + TibiaLength**2 - np.sqrt(d**2))/(2*TibiaLength*ThighLength),4)) #rounding here prevents numerical error from pushing us to slighly out of arccos domain
     
     the4 = np.pi-the4prime
 
@@ -59,6 +60,7 @@ def IK_LL(T=fk.FK_LL()):
         bot = ThighLength**2*np.sin(the4)**2 + (TibiaLength+ThighLength*np.cos(the4))**2
 
         the5 = np.arcsin(-top/bot)
+        #print(the6)
 
         for j in range(2):
             
@@ -69,9 +71,11 @@ def IK_LL(T=fk.FK_LL()):
                 continue
 
             T34 = T_n_s(-ThighLength,0,0,the4)
+            #print(T34)
             T45 = T_n_s(-TibiaLength,0,0,the5)
-
+            #print(T45)
             T_tprime = T_prime_tilde@np.linalg.pinv(T34@T45)
+            #print(T_tprime)
 
             the2 = np.arccos(T_tprime[1,2])-np.pi/4
 
@@ -104,15 +108,18 @@ def IK_LL(T=fk.FK_LL()):
                         #print("Trying:\n")
                         #print(the1,the2,the3,the4,the5,the6)
                         if checkGoodLL(the1,the2,the3,the4,the5,the6,T):
-
-                            soln.append([the1,the2,the3,the4,the5,the6])
+                            if soln == []:
+                                soln.append([the1,the2,the3,the4,the5,the6])
+                            else:
+                                soln = checkBetterLL(soln,[the1,the2,the3,the4,the5,the6],T)
+                            
                             #soln[0].append(the1)
                             #soln[1].append(the2)
                             #soln[2].append(the3)
                             #soln[3].append(the4)
                             #soln[4].append(the5)
                             #soln[5].append(the6)
-    return soln
+    return soln[0]
 
 def IK_RL(T=fk.FK_RL()):
     ThighLength = 100
@@ -146,7 +153,7 @@ def IK_RL(T=fk.FK_RL()):
     #the4prime = np.arccos((ThighLength**2 + TibiaLength**2 - d**2)/(2*TibiaLength*ThighLength))
     
     d = T_prime[0,3]**2+T_prime[1,3]**2+T_prime[2,3]**2
-    the4prime = np.arccos(np.round((ThighLength**2 + TibiaLength**2 - d)/(2*TibiaLength*ThighLength),4)) #rounding here prevents numerical error from pushing us to slighly out of arccos domain
+    the4prime = np.arccos(np.round((ThighLength**2 + TibiaLength**2 - np.sqrt(d**2))/(2*TibiaLength*ThighLength),4)) #rounding here prevents numerical error from pushing us to slighly out of arccos domain
     
     the4 = np.pi-the4prime
 
@@ -163,6 +170,7 @@ def IK_RL(T=fk.FK_RL()):
             continue
 
         T56 = T_n_s(0,-np.pi/2,0,the6)
+
         T_prime_tilde = T_tilde@np.linalg.pinv(T56@fk.R_z(np.pi)@fk.R_y(-np.pi/2))
         T_dprime = np.linalg.pinv(T_prime_tilde)
 
@@ -181,7 +189,6 @@ def IK_RL(T=fk.FK_RL()):
 
             T34 = T_n_s(-ThighLength,0,0,the4)
             T45 = T_n_s(-TibiaLength,0,0,the5)
-
             T_tprime = T_prime_tilde@np.linalg.pinv(T34@T45)
 
             the2 = np.arccos(T_tprime[1,2])-np.pi/4
@@ -193,21 +200,21 @@ def IK_RL(T=fk.FK_RL()):
                 if the2 < the2min or the2 > the2max:
                     continue
             
-                the3 = np.arcsin(T_tprime[1,1]/np.sin(the2+np.pi/4))
+                the3 = np.arcsin(T_tprime[1,1]/np.sin(the2-np.pi/4))
 
-                the1 = np.pi/2 + np.arccos(T_tprime[0,2]/np.sin(the2+np.pi/4))
+                the1 = np.pi/2 + np.arccos(T_tprime[0,2]/np.sin(the2-np.pi/4))
 
                 for l in range(2):
                     if l != 0: 
                         the3 = np.pi - the3
                     #print("T3: ", the3)
                     if the3 < the3min or the3 > the3max:
-                        continue
+                       continue
 
                     for m in range(2):
                         
                         if m != 0:
-                            the1 = np.pi/2 - np.arccos(T_tprime[0,2]/np.sin(the2+np.pi/4))
+                            the1 = np.pi/2 - np.arccos(T_tprime[0,2]/np.sin(the2-np.pi/4))
                         #print("T1: ",the1)
                         if the1 < the1min or the1 > the1max:
                             continue
@@ -215,16 +222,18 @@ def IK_RL(T=fk.FK_RL()):
                         #print("Trying:\n")
                         #print(the1,the2,the3,the4,the5,the6)
                         if checkGoodRL(the1,the2,the3,the4,the5,the6,T):
-
-                            soln.append([the1,the2,the3,the4,the5,the6])
-
+                            if soln == []:
+                                soln.append([the1,the2,the3,the4,the5,the6])
+                            else:
+                                soln = checkBetterRL(soln,[the1,the2,the3,the4,the5,the6],T)
+                            
                             #soln[0].append(the1)
                             #soln[1].append(the2)
                             #soln[2].append(the3)
                             #soln[3].append(the4)
                             #soln[4].append(the5)
                             #soln[5].append(the6)
-    return soln
+    return soln[0]
 
 def T_n_s (a, alp, d, the):
     # CANNOT SUBSTITUTE fk.T_n --> creates 3D arrays and relies on list structure
@@ -250,14 +259,20 @@ def checkGoodLL(t1,t2,t3,t4,t5,t6,T_goal):
 
     pos_err = np.sqrt(x_err**2 + y_err**2 + z_err**2)
 
+    #print(x_err, y_err, z_err)
+    #print(pos_err)
+
     Rx_err = P_goal[3] - P_cur[3]
     Ry_err = P_goal[4] - P_cur[4]
     Rz_err = P_goal[5] - P_cur[5]
 
+    #print(Rx_err,Ry_err,Rz_err)
 
     rot_err = np.sqrt(Rx_err**2 + Ry_err**2 + Rz_err**2)
+
+    #print(rot_err)
     
-    if pos_err < 1 and rot_err < 0.1:
+    if pos_err < 25.4 and rot_err < 0.5:
         return True
     else: return False
 def checkGoodRL(t1,t2,t3,t4,t5,t6,T_goal):
@@ -268,9 +283,9 @@ def checkGoodRL(t1,t2,t3,t4,t5,t6,T_goal):
     P_cur = tu.transmat2sixvec(T_cur)
 
     #allow 1 mm position error and 0.1 rad rotation error
-    x_err = P_goal[0] - P_cur[0]
-    y_err = P_goal[1] - P_cur[1]
-    z_err = P_goal[2] - P_cur[2]
+    x_err = T_goal[3,0] - T_cur[3,0]
+    y_err = T_goal[3,1] - T_cur[3,1]
+    z_err = T_goal[3,2] - T_cur[3,2]
 
     pos_err = np.sqrt(x_err**2 + y_err**2 + z_err**2)
 
@@ -284,15 +299,49 @@ def checkGoodRL(t1,t2,t3,t4,t5,t6,T_goal):
         return True
     else: return False
 
+
+def checkBetterRL(s1,s2,goal):
+    P1 = fk.FK_RL(s1[0][0],s1[0][1],s1[0][2],s1[0][3],s1[0][4],s1[0][5])
+    P2 = fk.FK_RL(s2[0],s2[1],s2[2],s2[3],s2[4],s2[5])
+    g1 = P1[0,3]**2+P1[1,3]**2+P1[2,3]**2
+    g2 = P2[0,3]**2+P2[1,3]**2+P2[2,3]**2
+    g_goal = goal[0,3]**2 + goal[1,3]**2 + goal[2,3]**2
+    q1 = np.abs(g1-g_goal)
+    q2 = np.abs(g2-g_goal)
+
+    if q2 < q1:
+        return [s2]
+    else: return s1
+
+def checkBetterLL(s1,s2,goal):
+    P1 = fk.FK_LL(s1[0][0],s1[0][1],s1[0][2],s1[0][3],s1[0][4],s1[0][5])
+    P2 = fk.FK_LL(s2[0],s2[1],s2[2],s2[3],s2[4],s2[5])
+    g1 = P1[0,3]**2+P1[1,3]**2+P1[2,3]**2
+    g2 = P2[0,3]**2+P2[1,3]**2+P2[2,3]**2
+    g_goal = goal[0,3]**2 + goal[1,3]**2 + goal[2,3]**2
+    q1 = np.abs(g1-g_goal)
+    q2 = np.abs(g2-g_goal)
+
+    if q2 < q1:
+        return [s2]
+    else: return s1
+
 if __name__ == "__main__":
     IKLL = IK_LL()
-    print(IKLL)
+    #print("Left Leg: ")
+    #print(IKLL)
     IKRL = IK_RL()
-    print(IKRL)
-    LLT=[[9.91492293e-01,  2.87930223e-04, -1.30165091e-01,  4.71580516e+00],
+    #print("Right Leg: ")
+    #print(IKRL)
+    LLT=np.array([[9.91492293e-01,  2.87930223e-04, -1.30165091e-01,  4.71580516e+00],
         [-2.75089191e-04,  9.99999955e-01,  1.16631872e-04,  4.99708743e+01],
         [ 1.30165119e-01, -7.98325924e-05,  9.91492327e-01, -3.17259889e+02],
-        [0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  1.00000000e+00]]
-
+        [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  1.00000000e+00]])
+    #print("\nCustom test \n")
     IKLL = IK_LL(T = LLT)
-    print(IKLL)
+    #print(IKLL)
+
+    print("\nCustom Test 2 \n")
+
+    LLT2 = fk.FK_RL([0, 0, -np.pi/8, np.pi/4, -np.pi/6, 0])
+    print(IK_LL(LLT2))
