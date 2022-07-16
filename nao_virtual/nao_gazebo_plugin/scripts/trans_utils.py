@@ -36,23 +36,23 @@ def csv2transmat(file,n):
     normalizing_factor = (float(coords[1])+float(coords[3]))/2
     xr = float(coords[1]) - normalizing_factor
     xl = float(coords[3]) - normalizing_factor
-    T_r[0,3] = xr*1000*5
+    T_r[0,3] = xr*1000*3
     if T_r[0,3] < 0:
         T_r[0,3] = 0
 
     T_r[1,3] = 0
-    T_r[2,3] = float(coords[2])*1000*5 - (85+100+102.9+45.19)
+    T_r[2,3] = float(coords[2])*1000*3 - (85+100+102.9+45.19)
     T_r[3,3] = 1
 
     T_r[0,0] = 1
     T_r[1,1] = 1
     T_r[2,2] = 1
 
-    T_l[0,3] = xl*1000*5
+    T_l[0,3] = xl*1000*3
     if T_l[0,3] < 0:
         T_l[0,3] = 0
     T_l[1,3] = 0
-    T_l[2,3] = float(coords[4])*1000*5 - (85+100+102.9+45.19)
+    T_l[2,3] = float(coords[4])*1000*3 - (85+100+102.9+45.19)
     T_l[3,3] = 1
 
     T_l[0,0] = 1
