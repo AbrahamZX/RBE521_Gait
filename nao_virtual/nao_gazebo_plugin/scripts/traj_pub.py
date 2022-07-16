@@ -4,14 +4,16 @@ from math import pi
 from std_msgs.msg import Header
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 
+# Publishes the given joint angles to the robot in the gazebo simulation
+
 def pub_test ():
-	# Generating the trajectory messages for the controllers
+    # Generating the trajectory messages for the controllers
 	
     # Left Arm
     la = JointTrajectory()
     la.joint_names = ['LShoulderPitch', 'LShoulderRoll', 'LElbowYaw', 'LElbowRoll', 'LWristYaw']
     lapt = JointTrajectoryPoint()
-    lapt.positions = [pi/2, 0, 0, 0, 0]
+    lapt.positions = [pi/2, 0, -pi/2, 0, 0]
     lapt.time_from_start = rospy.Duration.from_sec(1)
     la.points.append(lapt)
     
@@ -19,7 +21,7 @@ def pub_test ():
     ra = JointTrajectory()
     ra.joint_names = ['RShoulderPitch', 'RShoulderRoll', 'RElbowYaw', 'RElbowRoll', 'RWristYaw']
     rapt = JointTrajectoryPoint()
-    rapt.positions = [pi/2, 0, 0, 0, 0]
+    rapt.positions = [pi/2, 0, pi/2, 0, 0]
     rapt.time_from_start = rospy.Duration.from_sec(1)
     ra.points.append(rapt)  
     
@@ -75,7 +77,8 @@ def pub_test ():
     rf = JointTrajectory()
     rf.joint_names = ['RAnklePitchJoint', 'RAnkleRoll']
     rfpt = JointTrajectoryPoint()
-    rfpt.positions = [0, 0]
+    rfpos = [0, 0]
+    rfpt.positions = rfpos
     rfpt.time_from_start = rospy.Duration.from_sec(1)
     rf.points.append(rfpt)
         
@@ -117,9 +120,6 @@ def trajectory_test ():
     
     # Calling the function that generates the messages and pusblishes    
     pub_test()
-    
-    #rospy.Timer(rospy.Duration(0.01), pub_test)
-    #rospy.spin()
 
 if __name__ == '__main__':
     trajectory_test()
