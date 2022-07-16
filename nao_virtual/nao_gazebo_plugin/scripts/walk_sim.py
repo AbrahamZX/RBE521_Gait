@@ -53,7 +53,7 @@ class nao_sim:
         #Tw = tu.quat2transmat(pos.x, pos.y, pos.z, o.x, o.y, o.z, o.w)
         #print (Tw)
 
-        self.gait += 1
+        self.gait += 4
         
         Trl, Tll = tu.csv2transmat('gait_steps.csv', self.gait) #T_offset
         '''
@@ -66,7 +66,7 @@ class nao_sim:
             self.gait = -1
         else:
         '''
-        Trl1, Tll1 = tu.csv2transmat('gait_steps.csv', self.gait+1) #T_offset_+1
+        Trl1, Tll1 = tu.csv2transmat('gait_steps.csv', self.gait+4) #T_offset_+1
 
         print ('Offset Trl: ',Trl, Trl1)
         print ('Offset Tll: ',Tll, Tll1)
@@ -132,7 +132,7 @@ def trajectory_sim ():
 
     # Calling the function that generates the messages and pusblishes    
 
-    rospy.Timer(rospy.Duration(.1), n.sim_test)
+    rospy.Timer(rospy.Duration(.001), n.sim_test)
     rospy.spin()
 
 if __name__ == '__main__':
