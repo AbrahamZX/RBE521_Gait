@@ -5,6 +5,9 @@ import numpy as np
 from control_msgs.msg import JointTrajectoryControllerState
 from sensor_msgs.msg import JointState
 
+# Forward kinematics of the nao robot using the joint angles being inputted
+# by the gazebo simulation to find the end effector pose.
+
 def R_x (ang):
     return np.array([[1, 0, 0, 0],
                      [0, np.cos(ang), -np.sin(ang), 0],
@@ -134,21 +137,18 @@ def fk (time):
 
     la = find_joint_val(joint_msg, ["LShoulderPitch", "LShoulderRoll", "LElbowYaw", "LElbowRoll"])
     LA = FK_LA(la[0], la[1], la[2], la[3])
-    print ("Left arm:\n", LA,"\n")
 
     ra = find_joint_val(joint_msg, ["RShoulderPitch", "RShoulderRoll", "RElbowYaw", "RElbowRoll"])
     RA = FK_RA(ra[0], ra[1], ra[2], ra[3])
-    print ("Right arm:\n", RA,"\n")
     
     ll = find_joint_val(joint_msg, ["LHipYawPitch", "LHipRoll", "LHipPitch", "LKneePitch", "LAnklePitchJoint", "LAnkleRoll"])
     LL = FK_LL(ll[0], ll[1], ll[2], ll[3], ll[4], ll[5])
-    print ("Left leg:\n", LL,"\n")
 
     rl = find_joint_val(joint_msg, ["RHipYawPitch", "RHipRoll", "RHipPitch", "RKneePitch", "RAnklePitchJoint", "RAnkleRoll"])
     RL = FK_RL(rl[0], rl[1], rl[2], rl[3], rl[4], rl[5])
-    print ("Right leg:\n", RL,"\n")
 
-    
+    return RL, LL
+
 if __name__ == '__main__':
     rospy.init_node("nao_fk")
     rospy.Timer(rospy.Duration(.01), fk)
