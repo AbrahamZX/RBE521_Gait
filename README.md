@@ -17,7 +17,7 @@ Instructions on how to clone the repo to a local catkin workspace directory:
 
 2. Inside this directory execute:
 ```
-git@github.com:AbrahamZX/RBE521_Gait.git
+git clone git@github.com:AbrahamZX/RBE521_Gait.git
 ```
 
 With a copy of the repo in the catkin worspace folder now build and source by executing the follwing in a terminal inside of 
