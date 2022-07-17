@@ -1,5 +1,6 @@
 import rospy
 import numpy as np
+
 import gaz_fk as fk
 import nao_ik_v3 as ik
 import trans_utils as tu
@@ -12,6 +13,7 @@ from scipy.spatial.transform import Rotation as R
 
 class nao_sim:
     def __init__(self):
+        self.f = 1
         self.ll = [0, 0, 0, 0, 0, 0]
         self.rl = [0, 0, 0, 0, 0, 0]
         self.la = [0, 0, 0, 0, 0]
@@ -33,8 +35,14 @@ class nao_sim:
         self.right_foot = rospy.Publisher('/nao_dcm/RightFoot_controller/command', JointTrajectory, queue_size=1)
 
     def sim_test(self, time):
+        if self.gait >= 791 and self.f < 4:
+            self.gait = 0
+            self.f += 1
+        elif self.gait >= 891 and self.f == 4:
+            print ('Finished gait execution.')
+            rospy.signal_shutdown('0')
+
         msg = rospy.wait_for_message('/gazebo/model_states', ModelStates).pose[1]
-        
         if self.la != self.goal_la:
             self.la = self.goal_la
             Ala = self.la
@@ -48,14 +56,10 @@ class nao_sim:
             self.right_arm.publish(JTra)
         
         pos = msg.position
-        #print (pos)
         o = msg.orientation
-        #Tw = tu.quat2transmat(pos.x, pos.y, pos.z, o.x, o.y, o.z, o.w)
-        #print (Tw)
-
         self.gait += 4
         
-        Trl, Tll = tu.csv2transmat('gait_steps.csv', self.gait) #T_offset
+        Trl, Tll = tu.csv2transmat('gait_steps.csv', self.gait, self.f) #T_offset
         '''
         if self.gait == 0 and self.init == True:
             Trl1 = Trl
@@ -66,27 +70,14 @@ class nao_sim:
             self.gait = -1
         else:
         '''
-        Trl1, Tll1 = tu.csv2transmat('gait_steps.csv', self.gait+4) #T_offset_+1
-
-        print ('Offset Trl: ',Trl, Trl1)
-        print ('Offset Tll: ',Tll, Tll1)
+        Trl1, Tll1 = tu.csv2transmat('gait_steps.csv', self.gait+4, self.f) #T_offset_+1
 
         Tdrl = Trl1 - Trl
         Tdll = Tll1 - Tll
-        
-        #Trl = Trl@Tw
-        #Tll = Tll@Tw
-
-        print ('Tdrl', Tdrl)
-        print ('Tdll', Tdll)
 
         Tfkrl, Tfkll = fk.fk (1) #T_right_leg, T_left_leg
-        print ('Tfkrl', Tfkrl)
-        print ('Tfkll', Tfkll)
-
         
         world2rob = R.from_quat([o.x,o.y,o.z,o.w]) #T_w2r
-        print ('world2rob: ', world2rob)
         rotm = world2rob.as_matrix()
         Tdrl[0:3,0:3] = Tdrl[0:3,0:3]@rotm 
         Tdll[0:3,0:3] = Tdll[0:3,0:3]@rotm
@@ -96,13 +87,8 @@ class nao_sim:
         Tfkll[0,3] = Tfkll[0,3] + Tdll[0,3]
         Tfkll[2,3] = Tfkll[2,3] + Tdll[2,3]
 
-        print ('Mod Tfkrl', Tfkrl)
-        print ('Mod Tfkll', Tfkll)
-
         All = ik.IK_LL(Tfkll)
-        print (All)
         Arl = ik.IK_RL(Tfkrl)
-        print (Arl)
 
         if All != [] and Arl != []:
             JTp, JTll, JTlf = pub.ll_jt(All[0], All[1], All[2], All[3], All[4], All[5])
