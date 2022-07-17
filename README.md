@@ -1,12 +1,18 @@
 # Nao Gait
 RBE 521 Project with a Nao V40 robot that is executing a gait in a gazebo simulation
 
-Github SSH key instructions:
-https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
+This repository uses cloned repositories from ros-naoqi, namely: https://github.com/ros-naoqi/nao_robot,
+https://github.com/ros-naoqi/nao_virtual, and https://github.com/ros-naoqi/nao_meshes. Those repositories
+were then used to generate the nao meshed and updated to run the gazebo simulation on ROS Noetic by using 
+the guide written by @robogeekcanada, found at: 
+https://github.com/robogeekcanada/noetic_robots/blob/main/NAO%20Simulator.md.
 
 In order to run this ROS directory the requirements are being on Linux 20.04 and having ROS Noetic.
 For instructions on how to install ROS Noetic and setup a workspace directory, consult this link:
 http://wiki.ros.org/noetic/Installation/Ubuntu
+
+Github SSH key instructions:
+https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
 
 For instructions on how to setup a Github SSH key, consult this link:
 https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
