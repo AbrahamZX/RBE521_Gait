@@ -60,16 +60,6 @@ class nao_sim:
         self.gait += 4
         
         Trl, Tll = tu.csv2transmat('gait_steps.csv', self.gait, self.f) #T_offset
-        '''
-        if self.gait == 0 and self.init == True:
-            Trl1 = Trl
-            Tll1 = Tll
-            Trl = [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
-            Tll = [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
-            self.init = False
-            self.gait = -1
-        else:
-        '''
         Trl1, Tll1 = tu.csv2transmat('gait_steps.csv', self.gait+4, self.f) #T_offset_+1
 
         Tdrl = Trl1 - Trl
